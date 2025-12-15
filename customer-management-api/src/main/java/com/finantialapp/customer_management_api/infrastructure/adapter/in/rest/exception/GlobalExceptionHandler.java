@@ -2,6 +2,7 @@ package com.finantialapp.customer_management_api.infrastructure.adapter.in.rest.
 
 
 import com.finantialapp.customer_management_api.domain.exception.account.*;
+import com.finantialapp.customer_management_api.domain.exception.customer.CustomerAlreadyExistsException;
 import com.finantialapp.customer_management_api.domain.exception.customer.CustomerInvalidDeleteException;
 import com.finantialapp.customer_management_api.domain.exception.customer.CustomerNotFoundException;
 import com.finantialapp.customer_management_api.domain.exception.customer.CustomerUnderAgeException;
@@ -70,6 +71,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomerInvalidDeleteException.class)
     public ResponseEntity<ApiError> handleCustomerInvalidDelete(CustomerInvalidDeleteException ex) {
+
+        ApiError error = new ApiError(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                ZonedDateTime.now()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomerAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleCustomerAlreadyExists(CustomerAlreadyExistsException ex) {
 
         ApiError error = new ApiError(
                 HttpStatus.BAD_REQUEST.value(),

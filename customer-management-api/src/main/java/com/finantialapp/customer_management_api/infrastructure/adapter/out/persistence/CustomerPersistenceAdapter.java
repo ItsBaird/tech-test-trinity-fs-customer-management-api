@@ -1,6 +1,7 @@
 package com.finantialapp.customer_management_api.infrastructure.adapter.out.persistence;
 
 import com.finantialapp.customer_management_api.application.port.out.CustomerPersistencePort;
+import com.finantialapp.customer_management_api.domain.enums.IdentificationType;
 import com.finantialapp.customer_management_api.domain.model.Customer;
 import com.finantialapp.customer_management_api.infrastructure.adapter.out.persistence.entity.CustomerEntity;
 import com.finantialapp.customer_management_api.infrastructure.adapter.out.persistence.mapper.CustomerPersistenceMapper;
@@ -61,5 +62,15 @@ public class CustomerPersistenceAdapter implements CustomerPersistencePort {
     @Override
     public void deleteById(Long id) {
         customerRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<Customer> findByIdentification(IdentificationType identificationType, String identificationNumber) {
+        return customerRepository
+                .findByIdentificationTypeAndIdentificationNumber(
+                        identificationType,
+                        identificationNumber
+                )
+                .map(mapper::tocustomer);
     }
 }

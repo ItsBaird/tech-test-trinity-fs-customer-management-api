@@ -17,8 +17,7 @@ public class CustomerPatchRequest {
 
 
     private IdentificationType identificationType;
-    @Positive(message = "Field 'identificationNumber' must be positive")
-    private Long identificationNumber;
+    private String identificationNumber;
     @Size(min = 2, message = "Field 'names' must have at least 2 characters")
     private String names;
     @Size(min = 2, message = "Field 'surnames' must have at least 2 characters")

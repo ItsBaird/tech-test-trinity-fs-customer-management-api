@@ -25,7 +25,7 @@ public class CustomerEntity {
     private long id;
     @Enumerated(EnumType.STRING)
     private IdentificationType identificationType;
-    private  long identificationNumber;
+    private  String identificationNumber;
     private String names;
     private String surnames;
     private String email;

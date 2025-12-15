@@ -3,6 +3,8 @@ package com.finantialapp.customer_management_api.application.service;
 import com.finantialapp.customer_management_api.application.port.in.CustomerServicePort;
 import com.finantialapp.customer_management_api.application.port.out.AccountPersistencePort;
 import com.finantialapp.customer_management_api.application.port.out.CustomerPersistencePort;
+import com.finantialapp.customer_management_api.domain.enums.IdentificationType;
+import com.finantialapp.customer_management_api.domain.exception.customer.CustomerAlreadyExistsException;
 import com.finantialapp.customer_management_api.domain.exception.customer.CustomerInvalidDeleteException;
 import com.finantialapp.customer_management_api.domain.exception.customer.CustomerNotFoundException;
 import com.finantialapp.customer_management_api.domain.exception.customer.CustomerUnderAgeException;
@@ -41,6 +43,12 @@ public class CustomerService implements CustomerServicePort {
     public Customer saveCustomer(Customer customer) {
 
 
+        validateUniqueIdentification(
+                customer.getIdentificationType(),
+                customer.getIdentificationNumber(),
+                null
+        );
+
         LocalDate today = LocalDate.now();
         Period age = Period.between(customer.getDateOfBirth(), today);
 
@@ -54,6 +62,12 @@ public class CustomerService implements CustomerServicePort {
 
     @Override
     public Customer updateCustomer(Long id, Customer customer) {
+
+        validateUniqueIdentification(
+                customer.getIdentificationType(),
+                customer.getIdentificationNumber(),
+                id
+        );
 
         // Validar edad mínima
         LocalDate today = LocalDate.now();
@@ -117,6 +131,7 @@ public class CustomerService implements CustomerServicePort {
     @Override
     public Customer partialUpdateCustomer(Long id, CustomerPatchRequest patch) {
 
+
         //Obtener el registro existente
         Customer savedCustomer = persistencePort.findById(id)
                 .orElseThrow(CustomerNotFoundException::new);
@@ -134,6 +149,18 @@ public class CustomerService implements CustomerServicePort {
             if (age.getYears() < 18) {
                 throw new CustomerUnderAgeException();
             }
+        }
+
+        boolean identificationChanged =
+                !Objects.equals(originalCopy.getIdentificationType(), savedCustomer.getIdentificationType()) ||
+                        !Objects.equals(originalCopy.getIdentificationNumber(), savedCustomer.getIdentificationNumber());
+
+        if (identificationChanged) {
+            validateUniqueIdentification(
+                    savedCustomer.getIdentificationType(),
+                    savedCustomer.getIdentificationNumber(),
+                    savedCustomer.getId()
+            );
         }
 
         //Detectar si hubo o no cambios
@@ -168,6 +195,22 @@ public class CustomerService implements CustomerServicePort {
         copy.setModifiedAt(c.getModifiedAt());
         return copy;
     }
+
+    private void validateUniqueIdentification(
+            IdentificationType type,
+            String number,
+            Long currentCustomerId
+    ) {
+        persistencePort.findByIdentification(type, number)
+                .filter(existing ->
+                        currentCustomerId == null || existing.getId() != currentCustomerId
+                )
+                .ifPresent(existing -> {
+                    throw new CustomerAlreadyExistsException();
+                });
+    }
+
+
 
 
 

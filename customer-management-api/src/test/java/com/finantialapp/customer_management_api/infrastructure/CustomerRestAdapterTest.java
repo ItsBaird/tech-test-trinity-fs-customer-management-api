@@ -41,7 +41,7 @@ public class CustomerRestAdapterTest {
     @DisplayName("getAll - Test for findAllCustomers method")
     void testFindAllCustomers() {
 
-        Customer c = new Customer(1L, IdentificationType.CC, 123L, "Juan", "Perez",
+        Customer c = new Customer(1L, IdentificationType.CC, "123", "Juan", "Perez",
                 "jp@mail.com", LocalDate.now(), ZonedDateTime.now(), ZonedDateTime.now());
 
         CustomerResponse response = CustomerResponse.builder()
@@ -68,7 +68,7 @@ public class CustomerRestAdapterTest {
     @DisplayName("getById - Test for findById method")
     void testFindById() {
 
-        Customer c = new Customer(1L, IdentificationType.CC, 123L, "Juan", "Perez",
+        Customer c = new Customer(1L, IdentificationType.CC, "123", "Juan", "Perez",
                 "jp@mail.com", LocalDate.now(), ZonedDateTime.now(), ZonedDateTime.now());
 
         CustomerResponse response = CustomerResponse.builder().id(1L).build();
@@ -91,11 +91,11 @@ public class CustomerRestAdapterTest {
 
         CustomerCreateRequest req = CustomerCreateRequest.builder()
                 .identificationType(IdentificationType.CC)
-                .identificationNumber(123L)
+                .identificationNumber("123")
                 .names("Juan")
                 .build();
 
-        Customer domain = new Customer(1L, IdentificationType.CC, 123L, "Juan", "Perez",
+        Customer domain = new Customer(1L, IdentificationType.CC, "123", "Juan", "Perez",
                 "jp@mail.com", LocalDate.now(), ZonedDateTime.now(), ZonedDateTime.now());
 
         CustomerResponse response = CustomerResponse.builder()
@@ -126,12 +126,12 @@ public class CustomerRestAdapterTest {
 
         CustomerCreateRequest req = CustomerCreateRequest.builder()
                 .identificationType(IdentificationType.CC)
-                .identificationNumber(123L)
+                .identificationNumber("123")
                 .names("Juan")
                 .build();
 
         Customer mapped = new Customer();
-        Customer updated = new Customer(1L, IdentificationType.CC, 123L,
+        Customer updated = new Customer(1L, IdentificationType.CC, "123",
                 "Updated", "Updated", "upd@mail.com",
                 LocalDate.now(), ZonedDateTime.now(), ZonedDateTime.now());
 
@@ -162,7 +162,7 @@ public class CustomerRestAdapterTest {
                 .email("new@mail.com")
                 .build();
 
-        Customer updated = new Customer(1L, IdentificationType.CC, 123L,
+        Customer updated = new Customer(1L, IdentificationType.CC, "123",
                 "Juan", "Perez", "new@mail.com",
                 LocalDate.now(), ZonedDateTime.now(), ZonedDateTime.now());
 

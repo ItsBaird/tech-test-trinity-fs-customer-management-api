@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-12-10T18:20:01-0500",
+    date = "2025-12-14T18:18:31-0500",
     comments = "version: 1.6.3, compiler: javac, environment: Java 22 (Oracle Corporation)"
 )
 @Component
@@ -45,7 +45,9 @@ public class CustomerRestMapperImpl implements CustomerRestMapper {
 
         customerResponse.id( customer.getId() );
         customerResponse.identificationType( customer.getIdentificationType() );
-        customerResponse.identificationNumber( customer.getIdentificationNumber() );
+        if ( customer.getIdentificationNumber() != null ) {
+            customerResponse.identificationNumber( Long.parseLong( customer.getIdentificationNumber() ) );
+        }
         customerResponse.names( customer.getNames() );
         customerResponse.surnames( customer.getSurnames() );
         customerResponse.email( customer.getEmail() );

@@ -54,7 +54,7 @@ public class CustomerServiceTest {
         adult.setSurnames("Doe");
         adult.setEmail("john@doe.com");
         adult.setIdentificationType(IdentificationType.CC);
-        adult.setIdentificationNumber(123);
+        adult.setIdentificationNumber("123");
         adult.setDateOfBirth(LocalDate.now().minusYears(25));
 
         underAge = new Customer();
@@ -63,7 +63,7 @@ public class CustomerServiceTest {
         underAge.setSurnames("Young");
         underAge.setEmail("kid@young.com");
         underAge.setIdentificationType(IdentificationType.CC);
-        underAge.setIdentificationNumber(321);
+        underAge.setIdentificationNumber("321");
         underAge.setDateOfBirth(LocalDate.now().minusYears(15));
     }
 
@@ -141,7 +141,7 @@ public class CustomerServiceTest {
         existing.setSurnames("Doe");
         existing.setEmail("john@doe.com");
         existing.setIdentificationType(IdentificationType.CC);
-        existing.setIdentificationNumber(123);
+        existing.setIdentificationNumber("123");
         existing.setDateOfBirth(LocalDate.now().minusYears(25));
 
         when(persistencePort.findById(1L)).thenReturn(Optional.of(existing));

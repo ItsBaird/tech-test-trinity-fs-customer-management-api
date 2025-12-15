@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 public class Customer {
     private long id;
     private IdentificationType identificationType;
-    private  long identificationNumber;
+    private  String identificationNumber;
     private String names;
     private String surnames;
     private String email;
@@ -16,7 +16,7 @@ public class Customer {
     private ZonedDateTime createdAt;
     private ZonedDateTime modifiedAt;
 
-    public Customer(long id, IdentificationType identificationType, long identificationNumber, String names, String surnames, String email, LocalDate dateOfBirth, ZonedDateTime createdAt, ZonedDateTime modifiedAt) {
+    public Customer(long id, IdentificationType identificationType, String identificationNumber, String names, String surnames, String email, LocalDate dateOfBirth, ZonedDateTime createdAt, ZonedDateTime modifiedAt) {
         this.id = id;
         this.identificationType = identificationType;
         this.identificationNumber = identificationNumber;
@@ -40,7 +40,7 @@ public class Customer {
         return identificationType;
     }
 
-    public long getIdentificationNumber() {
+    public String getIdentificationNumber() {
         return identificationNumber;
     }
 
@@ -77,7 +77,7 @@ public class Customer {
         this.identificationType = identificationType;
     }
 
-    public void setIdentificationNumber(long identificationNumber) {
+    public void setIdentificationNumber(String identificationNumber) {
         this.identificationNumber = identificationNumber;
     }
 
