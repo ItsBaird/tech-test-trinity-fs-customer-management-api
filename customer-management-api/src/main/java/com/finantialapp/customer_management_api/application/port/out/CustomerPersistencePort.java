@@ -20,5 +20,7 @@ public interface CustomerPersistencePort {
 
     Optional<Customer> findByIdentification(IdentificationType identificationType, String identificationNumber);
 
+    Optional<Customer> findByEmail(String email);
+
 
 }

@@ -73,4 +73,10 @@ public class CustomerPersistenceAdapter implements CustomerPersistencePort {
                 )
                 .map(mapper::tocustomer);
     }
+
+    @Override
+    public Optional<Customer> findByEmail(String email) {
+        return customerRepository.findByEmail(email)
+                .map(mapper::tocustomer);
+    }
 }

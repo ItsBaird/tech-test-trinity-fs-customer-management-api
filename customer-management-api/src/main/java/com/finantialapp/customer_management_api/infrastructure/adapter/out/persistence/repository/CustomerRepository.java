@@ -12,4 +12,6 @@ public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> 
     Optional<CustomerEntity> findByIdentificationTypeAndIdentificationNumber(
             IdentificationType identificationType,
             String identificationNumber);
+
+    Optional<CustomerEntity> findByEmail(String email);
 }

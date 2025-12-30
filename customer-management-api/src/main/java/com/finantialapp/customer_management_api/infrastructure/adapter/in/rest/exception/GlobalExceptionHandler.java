@@ -2,10 +2,7 @@ package com.finantialapp.customer_management_api.infrastructure.adapter.in.rest.
 
 
 import com.finantialapp.customer_management_api.domain.exception.account.*;
-import com.finantialapp.customer_management_api.domain.exception.customer.CustomerAlreadyExistsException;
-import com.finantialapp.customer_management_api.domain.exception.customer.CustomerInvalidDeleteException;
-import com.finantialapp.customer_management_api.domain.exception.customer.CustomerNotFoundException;
-import com.finantialapp.customer_management_api.domain.exception.customer.CustomerUnderAgeException;
+import com.finantialapp.customer_management_api.domain.exception.customer.*;
 import com.finantialapp.customer_management_api.domain.exception.transaction.InvalidTransactionRequestException;
 import com.finantialapp.customer_management_api.domain.exception.transaction.TransactionNotFoundException;
 import com.finantialapp.customer_management_api.infrastructure.adapter.in.rest.model.response.ApiError;
@@ -83,6 +80,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomerAlreadyExistsException.class)
     public ResponseEntity<ApiError> handleCustomerAlreadyExists(CustomerAlreadyExistsException ex) {
+
+        ApiError error = new ApiError(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                ZonedDateTime.now()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomerEmailAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleCustomerEmailAlreadyExists(CustomerEmailAlreadyExistsException ex) {
 
         ApiError error = new ApiError(
                 HttpStatus.BAD_REQUEST.value(),

@@ -4,10 +4,7 @@ import com.finantialapp.customer_management_api.application.port.in.CustomerServ
 import com.finantialapp.customer_management_api.application.port.out.AccountPersistencePort;
 import com.finantialapp.customer_management_api.application.port.out.CustomerPersistencePort;
 import com.finantialapp.customer_management_api.domain.enums.IdentificationType;
-import com.finantialapp.customer_management_api.domain.exception.customer.CustomerAlreadyExistsException;
-import com.finantialapp.customer_management_api.domain.exception.customer.CustomerInvalidDeleteException;
-import com.finantialapp.customer_management_api.domain.exception.customer.CustomerNotFoundException;
-import com.finantialapp.customer_management_api.domain.exception.customer.CustomerUnderAgeException;
+import com.finantialapp.customer_management_api.domain.exception.customer.*;
 import com.finantialapp.customer_management_api.domain.model.Account;
 import com.finantialapp.customer_management_api.domain.model.Customer;
 import com.finantialapp.customer_management_api.infrastructure.adapter.in.rest.mapper.CustomerRestMapper;
@@ -49,6 +46,8 @@ public class CustomerService implements CustomerServicePort {
                 null
         );
 
+        validateUniqueEmail(customer.getEmail(), null);
+
         LocalDate today = LocalDate.now();
         Period age = Period.between(customer.getDateOfBirth(), today);
 
@@ -76,6 +75,8 @@ public class CustomerService implements CustomerServicePort {
         if (age.getYears() < 18) {
             throw new CustomerUnderAgeException();
         }
+
+        validateUniqueEmail(customer.getEmail(), id);
 
         return persistencePort.findById(id)
                 .map(savedCustomer -> {
@@ -163,6 +164,14 @@ public class CustomerService implements CustomerServicePort {
             );
         }
 
+        boolean emailChanged =
+                !Objects.equals(originalCopy.getEmail(), savedCustomer.getEmail());
+
+        if (emailChanged) {
+            validateUniqueEmail(savedCustomer.getEmail(), savedCustomer.getId());
+        }
+
+
         //Detectar si hubo o no cambios
         boolean noChanges =
                 Objects.equals(originalCopy.getNames(), savedCustomer.getNames()) &&
@@ -210,7 +219,17 @@ public class CustomerService implements CustomerServicePort {
                 });
     }
 
+    private void validateUniqueEmail(String email, Long currentCustomerId) {
 
+        persistencePort.findByEmail(email)
+                .filter(existing ->
+                        currentCustomerId == null ||
+                                existing.getId() != currentCustomerId
+                )
+                .ifPresent(existing -> {
+                    throw new CustomerEmailAlreadyExistsException();
+                });
+    }
 
 
 
