@@ -1,0 +1,72 @@
+services:
+
+  # BASE DE DATOS - PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: customer_management_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"           # Expuesto solo para desarrollo local (quitar en prod)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # Persistencia de datos
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - backend_network
+
+  # APLICACIÓN - Spring Boot
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: customer_management_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy    # Espera a que PostgreSQL esté listo ANTES de arrancar
+    environment:
+      # Spring sobreescribe application.properties con estas variables de entorno.
+      # Así nunca hay credenciales hardcodeadas en el código.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_LOCATIONS: classpath:migration
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+      SPRING_FLYWAY_BASELINE_VERSION: "0"
+      SERVER_PORT: 8080
+      # Perfil activo (cambiar a 'prod' en producción)
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+
+
+# VOLÚMENES
+volumes:
+  postgres_data:
+    driver: local
+
+# REDES
+# Los servicios se comunican por nombre (postgres, app)
+# en una red interna privada. No se exponen entre sí al host.
+networks:
+  backend_network:
+    driver: bridge

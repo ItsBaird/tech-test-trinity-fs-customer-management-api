@@ -1,0 +1,39 @@
+# ============================================================
+# .dockerignore
+# Excluye archivos innecesarios del contexto de build.
+# Reduce el tamaño de la imagen y evita filtrar información.
+# ============================================================
+
+# Git
+.git
+.gitignore
+
+# Variables de entorno (NUNCA dentro de la imagen)
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea
+*.iml
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Target (se genera dentro del contenedor en el stage builder)
+target/
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Documentación
+*.md
+docs/
+
+# Tests y reportes
+**/*Test.java
+**/test/
