@@ -39,6 +39,10 @@ public class CustomerService implements CustomerServicePort {
     @Override
     public Customer saveCustomer(Customer customer) {
 
+        validateIdentificationFormat(
+                customer.getIdentificationType(),
+                customer.getIdentificationNumber()
+        );
 
         validateUniqueIdentification(
                 customer.getIdentificationType(),
@@ -61,6 +65,11 @@ public class CustomerService implements CustomerServicePort {
 
     @Override
     public Customer updateCustomer(Long id, Customer customer) {
+
+        validateIdentificationFormat(
+                customer.getIdentificationType(),
+                customer.getIdentificationNumber()
+        );
 
         validateUniqueIdentification(
                 customer.getIdentificationType(),
@@ -143,6 +152,8 @@ public class CustomerService implements CustomerServicePort {
         //Aplicar los cambios del PATCH ignorando nulls (MapStruct)
         restMapper.updateCustomerFromPatch(patch, savedCustomer);
 
+
+
         //Validar edad si viene dateOfBirth en el PATCH
         if (patch.getDateOfBirth() != null) {
             LocalDate today = LocalDate.now();
@@ -157,6 +168,12 @@ public class CustomerService implements CustomerServicePort {
                         !Objects.equals(originalCopy.getIdentificationNumber(), savedCustomer.getIdentificationNumber());
 
         if (identificationChanged) {
+
+            validateIdentificationFormat(
+                    savedCustomer.getIdentificationType(),
+                    savedCustomer.getIdentificationNumber()
+            );
+
             validateUniqueIdentification(
                     savedCustomer.getIdentificationType(),
                     savedCustomer.getIdentificationNumber(),
@@ -229,6 +246,26 @@ public class CustomerService implements CustomerServicePort {
                 .ifPresent(existing -> {
                     throw new CustomerEmailAlreadyExistsException();
                 });
+    }
+
+    private void validateIdentificationFormat(IdentificationType type, String number) {
+        if (type == null || number == null) return;
+        switch (type) {
+            case CC, CE -> {
+                if (!number.matches("^[0-9]+$")) {
+                    throw new CustomerInvalidIdentificationException(
+                            "CC and CE must contain only numeric digits"
+                    );
+                }
+            }
+            case PA -> {
+                if (!number.matches("^[A-Za-z0-9]+$")) {
+                    throw new CustomerInvalidIdentificationException(
+                            "Passport must contain only alphanumeric characters"
+                    );
+                }
+            }
+        }
     }
 
 
