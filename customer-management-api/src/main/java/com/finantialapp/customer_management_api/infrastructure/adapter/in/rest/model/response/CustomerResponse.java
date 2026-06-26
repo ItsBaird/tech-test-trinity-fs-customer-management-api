@@ -17,7 +17,7 @@ public class CustomerResponse {
 
     private long id;
     private IdentificationType identificationType;
-    private  long identificationNumber;
+    private  String identificationNumber;
     private String names;
     private String surnames;
     private String email;

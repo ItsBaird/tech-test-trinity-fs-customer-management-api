@@ -17,6 +17,7 @@ public class CustomerCreateRequest {
     @NotNull(message = "Field 'identificationType' must not be empty or null")
     private IdentificationType identificationType;
     @NotBlank(message = "Field 'identificationNumber' must not be null")
+    @Size(max = 25, message = "Field 'identificationNumber' must not exceed 25 characters")
     private  String identificationNumber;
     @NotBlank(message = "Field 'names' must not be empty or null")
     @Size(min = 2, message = "Field 'names' must have at least 2 characters")

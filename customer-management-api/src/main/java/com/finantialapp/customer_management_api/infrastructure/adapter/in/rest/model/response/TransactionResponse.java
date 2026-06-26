@@ -17,7 +17,7 @@ public class TransactionResponse {
     private Long id;
     private TransactionType transactionType;
     private BigDecimal amount;
-    private Long sourceAccountId;
-    private Long destinationAccountId;
+    private String sourceAccountNumber;
+    private String destinationAccountNumber;
     private LocalDateTime transactionDate;
 }
